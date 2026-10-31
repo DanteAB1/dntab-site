@@ -1,0 +1,781 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Chaveamento de Magic · DNTAB</title>
+<meta name="description" content="Monte e conduza torneios de Magic: 1x1 ou pods de Commander, eliminação simples, dupla ou todos contra todos.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#f5f1e8;--panel:#fffdf8;--card:#ffffff;--ink:#1f1b16;--muted:#6f675b;--line:#e2d9c8;
+  --accent:#a4471f;--accent-ink:#ffffff;--accent-soft:#f6e3d6;--win:#f3e2d6;--ready:#2f6f4f;--ready-soft:#e3f1e8;
+  --shadow:0 1px 2px rgba(40,30,15,.06),0 4px 14px rgba(40,30,15,.06);
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#15130f;--panel:#1d1a15;--card:#231f19;--ink:#efe8dc;--muted:#a69d8e;--line:#3a342b;
+  --accent:#e08a5c;--accent-ink:#1a120c;--accent-soft:#3a271c;--win:#3b2a20;--ready:#7cc49c;--ready-soft:#1f3328;
+  --shadow:0 1px 2px rgba(0,0,0,.3),0 4px 14px rgba(0,0,0,.25);
+}}
+:root[data-theme="dark"]{
+  --bg:#15130f;--panel:#1d1a15;--card:#231f19;--ink:#efe8dc;--muted:#a69d8e;--line:#3a342b;
+  --accent:#e08a5c;--accent-ink:#1a120c;--accent-soft:#3a271c;--win:#3b2a20;--ready:#7cc49c;--ready-soft:#1f3328;
+}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{background:var(--bg);color:var(--ink);font:15px/1.45 Inter,system-ui,-apple-system,"Segoe UI",sans-serif;-webkit-font-smoothing:antialiased}
+.wrap{max-width:1200px;margin:0 auto;padding:20px 16px 48px}
+header.top{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:22px}
+.brand{font-family:Fraunces,Georgia,serif;font-weight:800;font-size:20px;letter-spacing:.02em;color:var(--ink);text-decoration:none;cursor:pointer}
+.brand span{color:var(--accent)}
+h1{font-family:Fraunces,Georgia,serif;font-weight:800;font-size:clamp(26px,5vw,38px);line-height:1.1;margin:0 0 6px}
+h2{font-family:Fraunces,Georgia,serif;font-weight:600;font-size:20px;margin:0 0 12px}
+.muted{color:var(--muted)}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:20px;box-shadow:var(--shadow)}
+.grid2{display:grid;grid-template-columns:minmax(0,1.3fr) minmax(0,1fr);gap:20px;align-items:start}
+@media (max-width:820px){.grid2{grid-template-columns:1fr}}
+label.f{display:block;font-weight:600;font-size:13px;margin:14px 0 6px}
+input[type=text],input[type=number],textarea{width:100%;font:inherit;color:var(--ink);background:var(--card);border:1px solid var(--line);border-radius:10px;padding:10px 12px;outline:none}
+input:focus,textarea:focus{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-soft)}
+textarea{min-height:180px;resize:vertical}
+.seg{display:flex;flex-wrap:wrap;gap:6px}
+.seg label{position:relative}
+.seg input{position:absolute;opacity:0;pointer-events:none}
+.seg span{display:block;padding:8px 12px;border:1px solid var(--line);border-radius:10px;background:var(--card);cursor:pointer;font-size:14px}
+.seg span small{display:block;color:var(--muted);font-size:12px}
+.seg input:checked+span{border-color:var(--accent);background:var(--accent-soft)}
+.seg input:focus-visible+span{box-shadow:0 0 0 3px var(--accent-soft)}
+.dur{display:flex;flex-wrap:wrap;gap:8px;align-items:stretch}
+.dur input{width:120px;flex:0 0 auto}
+details.adv{margin-top:14px}
+details.adv summary{cursor:pointer;font-weight:600;font-size:13px;color:var(--muted)}
+.row3{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:10px}
+.btn{font:inherit;font-weight:600;border:1px solid var(--line);background:var(--card);color:var(--ink);border-radius:10px;padding:9px 14px;cursor:pointer}
+.btn:hover{border-color:var(--accent)}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+.btn.small{padding:6px 10px;font-size:13px}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+.err{color:#b3261e;background:#fbe9e7;border-radius:8px;padding:8px 10px;margin-top:12px;font-size:14px}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .err{background:#3a1d1a;color:#f2b8b5}}
+.saved{display:flex;flex-direction:column;gap:10px}
+.saved .item{display:flex;justify-content:space-between;align-items:center;gap:10px;border:1px solid var(--line);background:var(--card);border-radius:10px;padding:10px 12px}
+.saved .item b{display:block}
+.saved .item small{color:var(--muted)}
+.saved .acts{display:flex;gap:6px;flex-shrink:0}
+.toolbar{display:flex;flex-wrap:wrap;gap:8px;margin:14px 0 18px}
+.champ{display:inline-flex;align-items:center;gap:8px;background:var(--accent);color:var(--accent-ink);padding:10px 16px;border-radius:999px;font-weight:700;margin-bottom:14px}
+.note{border-left:3px solid var(--accent);background:var(--panel);padding:8px 12px;border-radius:0 8px 8px 0;margin-bottom:14px;font-size:14px}
+.prontas{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:20px}
+.chip{font:inherit;font-size:13px;border:1px solid var(--ready);color:var(--ink);background:var(--ready-soft);border-radius:999px;padding:5px 12px;cursor:pointer}
+.chip b{color:var(--ready);margin-right:4px}
+section.fase{margin-bottom:26px}
+section.fase>h3{font-size:12px;text-transform:uppercase;letter-spacing:.08em;color:var(--accent);margin:0 0 10px}
+.board{display:flex;gap:14px;overflow-x:auto;padding-bottom:10px;max-width:100%}
+.col{min-width:200px;max-width:240px;flex:0 0 auto;display:flex;flex-direction:column;gap:10px}
+.col h4{margin:0;font-size:13px;color:var(--muted);font-weight:600}
+.cards{flex:1;display:flex;flex-direction:column;gap:10px;justify-content:space-around}
+.card{background:var(--card);border:1px solid var(--line);border-radius:10px;overflow:hidden;box-shadow:var(--shadow);transition:box-shadow .2s,border-color .2s}
+.card.ready{border-color:var(--ready)}
+.card.flash{box-shadow:0 0 0 4px var(--ready-soft)}
+.card.skip{opacity:.5}
+.card .id{display:flex;justify-content:space-between;font-size:11px;color:var(--muted);padding:5px 9px;border-bottom:1px solid var(--line)}
+.card .id .st{font-weight:600}
+.card.ready .id .st{color:var(--ready)}
+.j{display:block;width:100%;text-align:left;font:inherit;color:var(--ink);background:transparent;border:0;padding:7px 9px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.j+.j{border-top:1px solid var(--line)}
+button.j{cursor:pointer}
+button.j:hover{background:var(--accent-soft)}
+.j.win{background:var(--win);font-weight:700}
+.j.win::after{content:" ✓";color:var(--accent)}
+.j.bye,.j.tbd{color:var(--muted);font-style:italic}
+.card .foot{border-top:1px solid var(--line);padding:4px 6px;display:flex;justify-content:flex-end}
+.link{font:inherit;font-size:12px;background:none;border:0;color:var(--muted);cursor:pointer;text-decoration:underline;padding:3px}
+table.cls{border-collapse:collapse;background:var(--card);border-radius:10px;overflow:hidden;width:100%;max-width:720px;box-shadow:var(--shadow)}
+table.cls th,table.cls td{border-bottom:1px solid var(--line);padding:8px 10px;text-align:left;font-size:14px}
+table.cls th{font-size:12px;color:var(--muted);font-weight:600}
+table.cls tr:first-child+tr td{font-weight:700}
+.tblwrap{overflow-x:auto}
+details.sorteio{margin-top:8px;font-size:14px}
+details.sorteio summary{cursor:pointer;color:var(--muted)}
+.toast{position:fixed;left:50%;bottom:20px;transform:translateX(-50%) translateY(20px);background:var(--ink);color:var(--bg);padding:10px 16px;border-radius:10px;opacity:0;pointer-events:none;transition:.25s;font-size:14px;max-width:calc(100% - 32px)}
+.toast.on{opacity:1;transform:translateX(-50%) translateY(0)}
+footer{margin-top:40px;color:var(--muted);font-size:13px;text-align:center}
+.help{font-size:13px;color:var(--muted);margin-top:4px}
+@media print{.toolbar,.prontas,header.top,footer,.foot{display:none!important}body{background:#fff}.board{overflow:visible;flex-wrap:wrap}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <a class="brand" data-act="home">dntab<span>.</span>chave</a>
+  </header>
+  <main id="app"></main>
+  <footer>dntab.com.br · os torneios ficam salvos neste navegador</footer>
+</div>
+<div class="toast" id="toast"></div>
+
+<script>
+// ==LOGIC START==
+const BYE = "BYE";
+class ErroChave extends Error {}
+function erro(m) { throw new ErroChave(m); }
+
+// ---------- sorteio com seed (reproduzível) ----------
+function xmur3(str) {
+  let h = 1779033703 ^ str.length;
+  for (let i = 0; i < str.length; i++) { h = Math.imul(h ^ str.charCodeAt(i), 3432918353); h = (h << 13) | (h >>> 19); }
+  return function () { h = Math.imul(h ^ (h >>> 16), 2246822507); h = Math.imul(h ^ (h >>> 13), 3266489909); return (h ^= h >>> 16) >>> 0; };
+}
+function mulberry32(a) {
+  return function () { a |= 0; a = (a + 0x6D2B79F5) | 0; let t = Math.imul(a ^ (a >>> 15), 1 | a); t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t; return ((t ^ (t >>> 14)) >>> 0) / 4294967296; };
+}
+function Rng(seed) {
+  const r = mulberry32(xmur3(String(seed))());
+  return { shuffle(arr) { for (let i = arr.length - 1; i > 0; i--) { const j = Math.floor(r() * (i + 1)); [arr[i], arr[j]] = [arr[j], arr[i]]; } return arr; } };
+}
+
+// ---------- pods ----------
+function tamanhosPods(n) {
+  if (n < 2) erro("Pods precisam de pelo menos 2 jogadores.");
+  if (n <= 5) return [n];
+  const k = Math.ceil(n / 4), tres = 4 * k - n;
+  return Array(k - tres).fill(4).concat(Array(tres).fill(3));
+}
+const chavePar = (a, b) => [a, b].sort().join("|");
+function montarPods(jogadores, rng, encontros, tentativas = 3000) {
+  const tam = tamanhosPods(jogadores.length);
+  let melhor = null, custoMin = Infinity;
+  for (let x = 0; x < tentativas; x++) {
+    const p = rng.shuffle(jogadores.slice());
+    const pods = []; let i = 0;
+    for (const t of tam) { pods.push(p.slice(i, i + t)); i += t; }
+    let custo = 0;
+    for (const pod of pods) for (let a = 0; a < pod.length; a++) for (let b = a + 1; b < pod.length; b++) custo += encontros[chavePar(pod[a], pod[b])] || 0;
+    if (custo < custoMin) { melhor = pods; custoMin = custo; }
+    if (custo === 0) break;
+  }
+  for (const pod of melhor) for (let a = 0; a < pod.length; a++) for (let b = a + 1; b < pod.length; b++) {
+    const k = chavePar(pod[a], pod[b]); encontros[k] = (encontros[k] || 0) + 1;
+  }
+  return melhor;
+}
+
+// ---------- 1x1 eliminação ----------
+function ordemSeeds(tam) {
+  let o = [1, 2];
+  while (o.length < tam) { const m = 2 * o.length + 1; o = o.flatMap(s => [s, m - s]); }
+  return o;
+}
+const log2c = n => Math.max(1, Math.ceil(Math.log2(n)));
+// Rodadas pedidas → tamanho da chave. Mais rodadas = mais vagas (vitórias automáticas);
+// uma a menos = a 1ª rodada vira preliminar (só os últimos sorteados jogam para entrar).
+function tamanhoChave(n, R) {
+  const k0 = log2c(n);
+  if (!R) return { tam: 2 ** k0, preliminar: false };
+  if (R >= k0) return { tam: 2 ** R, preliminar: false };
+  if (R === k0 - 1) return { tam: 2 ** k0, preliminar: true };
+  erro(`Com ${n} jogadores a chave precisa de pelo menos ${k0 - 1} rodada(s), além de uma preliminar.`);
+}
+function chaveEliminacao(t, dupla, R) {
+  const jog = t.sorteio, n = jog.length;
+  const { tam, preliminar } = tamanhoChave(n, R);
+  t.preliminar = preliminar;
+  const k = Math.round(Math.log2(tam));
+  const seed = s => (s <= n ? jog[s - 1] : BYE); // BYEs contra os primeiros sorteados, nunca BYE x BYE
+  const o = ordemSeeds(tam);
+  const add = (pid, fase, rodada, a, b) => { t.partidas[pid] = { fase, rodada, a, b, vencedor: null }; t.ordem.push(pid); };
+  const fu = dupla ? "upper" : "unica";
+  for (let m = 0; m < tam / 2; m++) add(`U1-${m + 1}`, fu, 1, ["J", seed(o[2 * m])], ["J", seed(o[2 * m + 1])]);
+  for (let r = 2; r <= k; r++) for (let m = 0; m < tam / 2 ** r; m++) add(`U${r}-${m + 1}`, fu, r, ["V", `U${r - 1}-${2 * m + 1}`], ["V", `U${r - 1}-${2 * m + 2}`]);
+  t.k = k;
+  if (!dupla) { t.final_id = `U${k}-1`; return; }
+  for (let m = 0; m < tam / 4; m++) add(`L1-${m + 1}`, "lower", 1, ["P", `U1-${2 * m + 1}`], ["P", `U1-${2 * m + 2}`]);
+  for (let i = 1; i < k; i++) {
+    const c = tam / 2 ** (i + 1);
+    for (let m = 0; m < c; m++) add(`L${2 * i}-${m + 1}`, "lower", 2 * i, ["V", `L${2 * i - 1}-${m + 1}`], ["P", `U${i + 1}-${c - m}`]); // invertido p/ evitar revanche
+    if (i < k - 1) for (let m = 0; m < tam / 2 ** (i + 2); m++) add(`L${2 * i + 1}-${m + 1}`, "lower", 2 * i + 1, ["V", `L${2 * i}-${2 * m + 1}`], ["V", `L${2 * i}-${2 * m + 2}`]);
+  }
+  add("GF-1", "final", 1, ["V", `U${k}-1`], ["V", `L${2 * k - 2}-1`]);
+  add("GF-2", "final", 2, ["V", "GF-1"], ["P", "GF-1"]); // reset: só se quem veio da inferior vencer a GF-1
+  t.final_id = "GF-2";
+}
+function resolver(t, s) {
+  const [tipo, v] = s;
+  if (tipo === "J") return v;
+  const p = t.partidas[v];
+  if (p.vencedor == null) return null;
+  if (tipo === "V") return p.vencedor;
+  const a = resolver(t, p.a), b = resolver(t, p.b);
+  return p.vencedor === a ? b : a;
+}
+function rotulo(t, s) {
+  const r = resolver(t, s);
+  if (r != null) return r;
+  return (s[0] === "V" ? "Vencedor " : "Perdedor ") + s[1];
+}
+function participantes(t, p) { return p.jogadores ? p.jogadores : [resolver(t, p.a), resolver(t, p.b)]; }
+function nomesPartida(t, p) { return p.jogadores ? p.jogadores : [rotulo(t, p.a), rotulo(t, p.b)]; }
+
+// ---------- todos contra todos ----------
+// Quantas rodadas (método do círculo) até todo mundo ter pelo menos G jogos de verdade (BYE não conta)
+function rodadasParaJogos1x1(nJog, G) {
+  if (nJog % 2 === 0) return G;
+  let j = Array.from({ length: nJog }, (_, i) => i).concat([-1]);
+  const n = j.length, jogos = Array(nJog).fill(0);
+  let r = 0;
+  while (Math.min(...jogos) < G && r < MAX_RODADAS) {
+    for (let m = 0; m < n / 2; m++) { const a = j[m], b = j[n - 1 - m]; if (a >= 0 && b >= 0) { jogos[a]++; jogos[b]++; } }
+    j = [j[0], j[n - 1], ...j.slice(1, n - 1)];
+    r++;
+  }
+  return r;
+}
+const MAX_RODADAS = 60, MAX_CHAVE = 8; // 8 rodadas = chave de 256 vagas
+function rodadasTodos(c) {
+  const n = c.jogadores.length;
+  const lim = x => Math.max(1, Math.min(MAX_RODADAS, x));
+  if (c.modo === "1x1") {
+    if (c.jogos_por_pessoa) return lim(rodadasParaJogos1x1(n, c.jogos_por_pessoa));
+    return lim(c.rodadas || (n % 2 ? n : n - 1)); // padrão: todos se enfrentam uma vez
+  }
+  // pods: todo mundo joga em toda rodada, então jogos por pessoa = rodadas
+  return lim(c.jogos_por_pessoa || c.rodadas || Math.ceil((n - 1) / 3));
+}
+function roundRobin1x1(t, R) {
+  let j = t.sorteio.slice();
+  if (j.length % 2) j.push(BYE);
+  const n = j.length;
+  for (let r = 0; r < R; r++) { // passando de n-1 rodadas, o círculo recomeça (returno)
+    for (let m = 0; m < n / 2; m++) {
+      const pid = `R${r + 1}-${m + 1}`;
+      t.partidas[pid] = { fase: "rr", rodada: r + 1, a: ["J", j[m]], b: ["J", j[n - 1 - m]], vencedor: null };
+      t.ordem.push(pid);
+    }
+    j = [j[0], j[n - 1], ...j.slice(1, n - 1)];
+  }
+}
+function roundRobinPods(t, rodadas) {
+  const rng = Rng(`${t.seed}-rr`);
+  for (let r = 0; r < rodadas; r++) {
+    montarPods(t.sorteio, rng, t.encontros).forEach((pod, m) => {
+      const pid = `R${r + 1}-P${m + 1}`;
+      t.partidas[pid] = { fase: "rr", rodada: r + 1, jogadores: pod, vencedor: null };
+      t.ordem.push(pid);
+    });
+  }
+}
+
+// ---------- eliminação em pods ----------
+function gerarRodadaPod(t) {
+  t.rodada_atual += 1;
+  const r = t.rodada_atual, rng = Rng(`${t.seed}-${r}`);
+  const up = t.pools.upper, low = t.pools.lower, tot = up.length + low.length;
+  if (tot === 1) { // sobrou um só: a última mesa já decidiu o campeão
+    const nome = up.concat(low)[0];
+    t.final_id = [...t.ordem].reverse().find(pid => t.partidas[pid].vencedor === nome);
+    t.pools = { upper: [], lower: [] };
+    return;
+  }
+  if (tot <= 4) {
+    t.partidas["F-1"] = { fase: "final", rodada: r, jogadores: up.concat(low), vencedor: null };
+    t.ordem.push("F-1");
+    t.final_id = "F-1";
+    t.pools = { upper: [], lower: [] };
+    return;
+  }
+  for (const [nome, pool] of [["upper", up], ["lower", low]]) {
+    if (pool.length < 3) continue; // aguarda a próxima rodada
+    const prefixo = nome === "upper" ? "U" : "L";
+    const fase = t.formato === "dupla" ? nome : "unica";
+    montarPods(pool, rng, t.encontros).forEach((pod, m) => {
+      const pid = `${prefixo}${r}-P${m + 1}`;
+      t.partidas[pid] = { fase, rodada: r, jogadores: pod, vencedor: null, pool: nome };
+      t.ordem.push(pid);
+    });
+    t.pools[nome] = [];
+  }
+}
+function avancarPods(t) {
+  const r = t.rodada_atual;
+  const atuais = t.ordem.map(pid => t.partidas[pid]).filter(p => p.rodada === r);
+  if (!atuais.length || atuais.some(p => p.vencedor == null) || t.final_id != null) return;
+  for (const p of atuais) {
+    const perdedores = p.jogadores.filter(j => j !== p.vencedor);
+    t.pools[p.pool].push(p.vencedor);
+    if (p.pool === "upper" && t.formato === "dupla") t.pools.lower.push(...perdedores);
+    else t.eliminados.push(...perdedores);
+  }
+  gerarRodadaPod(t);
+}
+
+// ---------- atualização / resultados ----------
+function atualizar(t) {
+  if (t.modo === "1x1") {
+    for (const pid of t.ordem) {
+      const p = t.partidas[pid];
+      if (p.vencedor != null) continue;
+      const a = resolver(t, p.a), b = resolver(t, p.b);
+      if (a == null || b == null) continue;
+      if (a === BYE) { p.vencedor = b; p.auto = true; }
+      else if (b === BYE) { p.vencedor = a; p.auto = true; }
+      else if (pid === "GF-2") {
+        const g = t.partidas["GF-1"];
+        if (g.vencedor === resolver(t, g.a)) { p.vencedor = g.vencedor; p.auto = true; p.nao_necessaria = true; }
+      }
+    }
+  } else if (t.formato !== "todos") avancarPods(t);
+}
+function classificacao(t) {
+  const s = {};
+  for (const j of t.jogadores) s[j] = { nome: j, pts: 0, v: 0, e: 0, d: 0, jogos: 0, opo: [] };
+  for (const pid of t.ordem) {
+    const p = t.partidas[pid];
+    if (p.vencedor == null) continue;
+    const parts = participantes(t, p).filter(x => x !== BYE);
+    for (const x of parts) { s[x].jogos++; s[x].opo.push(...parts.filter(y => y !== x)); }
+    if (p.vencedor === "empate") { for (const x of parts) { s[x].pts += t.pontos_empate; s[x].e++; } }
+    else {
+      s[p.vencedor].pts += t.pontos_vitoria; s[p.vencedor].v++;
+      for (const x of parts) if (x !== p.vencedor) s[x].d++;
+    }
+  }
+  const linhas = Object.values(s);
+  for (const l of linhas) l.forca = l.opo.reduce((acc, o) => acc + s[o].pts, 0);
+  return linhas.sort((a, b) => b.pts - a.pts || b.forca - a.forca || b.v - a.v || a.nome.toLowerCase().localeCompare(b.nome.toLowerCase(), "pt"));
+}
+function campeao(t) {
+  if (t.formato === "todos") return t.ordem.every(pid => t.partidas[pid].vencedor != null) ? classificacao(t)[0].nome : null;
+  return t.final_id ? t.partidas[t.final_id].vencedor : null;
+}
+function pronta(t, p) { return p.vencedor == null && participantes(t, p).every(x => x != null); }
+
+function criar(c) {
+  const jog = c.jogadores;
+  if (jog.length < 2) erro("Precisa de pelo menos 2 jogadores.");
+  if (new Set(jog.map(x => x.toLowerCase())).size !== jog.length) erro("Há nomes repetidos; use apelidos diferentes.");
+  if (jog.some(j => ["bye", "empate"].includes(j.toLowerCase()))) erro("“BYE” e “empate” são palavras reservadas; escolha outro nome.");
+  const sorteio = Rng(c.seed).shuffle(jog.slice());
+  const t = { nome: c.nome, modo: c.modo, formato: c.formato, jogadores: jog.slice(), seed: c.seed, sorteio, partidas: {}, ordem: [], encontros: {},
+    pontos_vitoria: c.pontos_vitoria ?? 3, pontos_empate: c.pontos_empate ?? 1, final_id: null };
+  if (c.modo === "1x1") {
+    if (c.formato === "todos") { t.rodadas_total = rodadasTodos(c); roundRobin1x1(t, t.rodadas_total); }
+    else {
+      if (c.formato === "dupla" && jog.length < 3) erro("Dupla eliminação precisa de pelo menos 3 jogadores.");
+      if (c.rodadas_chave && (c.rodadas_chave < 1 || c.rodadas_chave > MAX_CHAVE)) erro(`A chave pode ter de 1 a ${MAX_CHAVE} rodadas.`);
+      chaveEliminacao(t, c.formato === "dupla", c.rodadas_chave);
+    }
+  } else {
+    if (jog.length < 3) erro("Modo pod precisa de pelo menos 3 jogadores.");
+    if (c.formato === "todos") { t.rodadas_total = rodadasTodos(c); roundRobinPods(t, t.rodadas_total); }
+    else { Object.assign(t, { pools: { upper: sorteio.slice(), lower: [] }, rodada_atual: 0, eliminados: [] }); gerarRodadaPod(t); }
+  }
+  atualizar(t);
+  return t;
+}
+function aplicar(t, pid, venc) {
+  const p = t.partidas[pid];
+  if (!p) erro(`Partida ${pid} não existe.`);
+  if (p.auto) erro(`${pid} é automática.`);
+  const parts = participantes(t, p);
+  if (parts.some(x => x == null)) erro(`${pid} ainda não tem todos os jogadores definidos.`);
+  if (venc === "empate") { if (t.formato !== "todos") erro("Eliminação não aceita empate."); }
+  else if (!parts.includes(venc)) erro(`${venc} não está em ${pid}.`);
+  p.vencedor = venc;
+  atualizar(t);
+}
+// Reconstrói a chave do zero a partir da configuração + resultados (permite corrigir e desfazer)
+function reconstruir(config, resultados) {
+  const t = criar(config), validos = [];
+  for (const r of resultados) {
+    try { aplicar(t, r[0], r[1]); validos.push(r); }
+    catch (e) { if (!(e instanceof ErroChave)) throw e; }
+  }
+  return { t, validos };
+}
+// ==LOGIC END==
+
+// ================= Interface =================
+const KEY = "dntab-chaveamento-v1";
+const app = document.getElementById("app");
+let db = carregarDB();
+let atual = null; // {id, config, resultados, t}
+
+function carregarDB() { try { const o = JSON.parse(localStorage.getItem(KEY)); if (o && o.torneios) return o; } catch (e) {} return { torneios: {}, atual: null }; }
+function salvarDB() { try { localStorage.setItem(KEY, JSON.stringify(db)); } catch (e) {} }
+const esc = s => String(s).replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+function toast(msg) { const el = document.getElementById("toast"); el.textContent = msg; el.classList.add("on"); clearTimeout(toast.h); toast.h = setTimeout(() => el.classList.remove("on"), 2600); }
+
+function enc(o) { const b = new TextEncoder().encode(JSON.stringify(o)); let s = ""; b.forEach(x => s += String.fromCharCode(x)); return btoa(s).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, ""); }
+function dec(s) { s = s.replace(/-/g, "+").replace(/_/g, "/"); const bin = atob(s); return JSON.parse(new TextDecoder().decode(Uint8Array.from(bin, c => c.charCodeAt(0)))); }
+function urlBase() { return location.href.split("#")[0]; }
+function setHash(h) { try { history.replaceState(null, "", h ? "#" + h : urlBase()); } catch (e) {} }
+
+const MODOS = { "1x1": "1x1", pod: "Pods (mesa multiplayer)" };
+const FORMATOS = { simples: "Eliminação simples", dupla: "Dupla eliminação", todos: "Todos contra todos" };
+
+// ---------- Tela inicial ----------
+let edicao = null; // id do torneio sendo editado (null = criando um novo)
+function configParaForm(c) {
+  return {
+    nome: c.nome, modo: c.modo, formato: c.formato, jogadores: c.jogadores.join("\n"), seed: c.seed,
+    pv: c.pontos_vitoria ?? 3, pe: c.pontos_empate ?? 1,
+    durTipo: c.jogos_por_pessoa ? "jogos" : "rodadas", durQtd: c.jogos_por_pessoa || c.rodadas || "",
+    chaveQtd: c.rodadas_chave || "",
+  };
+}
+function editarTorneio() { edicao = atual.id; telaInicial(null, configParaForm(atual.config), edicao); }
+function telaInicial(erroMsg, form, editId, perdas) {
+  edicao = editId || null;
+  if (!edicao) { atual = null; db.atual = null; salvarDB(); setHash(null); }
+  const f = form || { nome: "Torneio de Magic", modo: "1x1", formato: "simples", jogadores: "", seed: "", rodadas: "", pv: 3, pe: 1 };
+  const salvos = Object.entries(db.torneios).sort((a, b) => b[1].atualizado - a[1].atualizado);
+  const nRes = edicao ? (db.torneios[edicao]?.resultados.length || 0) : 0;
+  app.innerHTML = `
+  <h1>${edicao ? "Editar opções do torneio" : "Chaveamento de Magic"}</h1>
+  <p class="muted" style="margin:0 0 20px">${edicao
+    ? `Mude o que precisar. Resultados que continuarem valendo são mantidos${nRes ? ` (${nRes} registrado${nRes > 1 ? "s" : ""})` : ""}; mantenha o nº do sorteio e a lista de jogadores para não refazer o sorteio.`
+    : "Sorteie as mesas, registre quem venceu e a chave avança sozinha até o campeão."}</p>
+  <div class="${edicao ? "" : "grid2"}" ${edicao ? 'style="max-width:640px"' : ""}>
+    <form class="panel" id="novo" autocomplete="off" novalidate>
+      <h2>${edicao ? "Opções" : "Novo torneio"}</h2>
+      <label class="f" for="nome">Nome do torneio</label>
+      <input type="text" id="nome" value="${esc(f.nome)}" maxlength="80">
+      <label class="f">Modo</label>
+      <div class="seg">
+        ${radio("modo", "1x1", "1x1", "Duelo", f.modo)}
+        ${radio("modo", "pod", "Pods", "Mesa de 4 · Commander", f.modo)}
+      </div>
+      <label class="f">Formato</label>
+      <div class="seg">
+        ${radio("formato", "simples", "Eliminação simples", "Perdeu, saiu", f.formato)}
+        ${radio("formato", "dupla", "Dupla eliminação", "Sai com 2 derrotas", f.formato)}
+        ${radio("formato", "todos", "Todos contra todos", "Pontos corridos", f.formato)}
+      </div>
+      <div id="durWrap">
+        <label class="f">Duração</label>
+        <div class="dur">
+          <div class="seg">
+            ${radio("durTipo", "rodadas", "Rodadas", "Total do torneio", f.durTipo || "rodadas")}
+            ${radio("durTipo", "jogos", "Jogos por pessoa", "Cada um joga", f.durTipo || "rodadas")}
+          </div>
+          <input type="number" id="durQtd" min="1" max="60" value="${esc(f.durQtd ?? "")}" placeholder="automático" aria-label="Quantidade">
+        </div>
+        <div class="help" id="durHelp"></div>
+      </div>
+      <div id="chaveWrap">
+        <label class="f" for="chaveQtd" id="chaveLbl">Rodadas da chave</label>
+        <div class="dur"><input type="number" id="chaveQtd" min="1" max="8" value="${esc(f.chaveQtd ?? "")}" placeholder="automático"></div>
+        <div class="help" id="chaveHelp"></div>
+      </div>
+      <label class="f" for="jog">Jogadores <span class="muted" id="cnt"></span></label>
+      <textarea id="jog" placeholder="Um nome por linha (ou separados por vírgula)">${esc(f.jogadores)}</textarea>
+      <details class="adv" ${edicao ? "open" : ""}>
+        <summary>Opções avançadas</summary>
+        <div class="row3">
+          <div><label class="f" for="seed">Nº do sorteio</label><input type="number" id="seed" value="${esc(f.seed)}" placeholder="aleatório"><div class="help">Repita o número para refazer o mesmo sorteio.</div></div>
+          <div><label class="f" for="pv">Pontos vitória</label><input type="number" id="pv" value="${esc(f.pv)}"></div>
+          <div><label class="f" for="pe">Pontos empate</label><input type="number" id="pe" value="${esc(f.pe)}"></div>
+        </div>
+      </details>
+      ${erroMsg ? `<div class="err">${esc(erroMsg)}</div>` : ""}
+      ${perdas ? `<div class="err">Com essas mudanças, ${perdas} resultado(s) já registrado(s) deixam de valer e serão apagados${perdas === nRes ? " (todos)" : ""}.
+        <div style="margin-top:10px;display:flex;gap:8px;flex-wrap:wrap"><button class="btn primary small" type="button" id="forcar">Salvar e apagar ${perdas} resultado(s)</button></div></div>` : ""}
+      <div style="margin-top:18px;display:flex;gap:8px;flex-wrap:wrap">
+        <button class="btn primary" type="button" id="criar">${edicao ? "Salvar alterações" : "Sortear e criar chave"}</button>
+        ${edicao ? `<button class="btn" type="button" data-act="cancelarEdicao">Cancelar</button>` : ""}
+      </div>
+    </form>
+    ${edicao ? "" : `<div class="panel">
+      <h2>Torneios salvos</h2>
+      ${salvos.length ? `<div class="saved">${salvos.map(([id, s]) => {
+        let status = "";
+        try { const c = campeao(reconstruir(s.config, s.resultados).t); status = c ? `Campeão: ${esc(c)}` : "Em andamento"; } catch (e) { status = "—"; }
+        return `<div class="item"><div><b>${esc(s.config.nome)}</b><small>${esc(MODOS[s.config.modo])} · ${esc(FORMATOS[s.config.formato])} · ${s.config.jogadores.length} jogadores<br>${status}</small></div>
+          <div class="acts"><button class="btn small" data-act="abrir" data-id="${esc(id)}">Abrir</button><button class="btn small" data-act="excluir" data-id="${esc(id)}" aria-label="Excluir">✕</button></div></div>`;
+      }).join("")}</div>` : `<p class="muted" style="margin:0">Nenhum torneio ainda. Os que você criar ficam guardados neste navegador.</p>`}
+    </div>`}
+  </div>`;
+  const form$ = document.getElementById("novo"), jog = document.getElementById("jog");
+  const sync = () => {
+    const n = lerJogadores(jog.value).length;
+    document.getElementById("cnt").textContent = n ? `(${n})` : "";
+    const modo = form$.querySelector("[name=modo]:checked").value, fmt = form$.querySelector("[name=formato]:checked").value;
+    document.getElementById("durWrap").style.display = fmt === "todos" ? "" : "none";
+    const elim1x1 = modo === "1x1" && fmt !== "todos";
+    document.getElementById("chaveWrap").style.display = elim1x1 ? "" : "none";
+    if (elim1x1) {
+      document.getElementById("chaveLbl").textContent = fmt === "dupla" ? "Rodadas da chave superior" : "Rodadas da chave";
+      document.getElementById("chaveHelp").textContent = textoChave(n, parseInt(document.getElementById("chaveQtd").value, 10) || null);
+    }
+    if (fmt === "todos") document.getElementById("durHelp").textContent = textoDuracao(modo, n,
+      form$.querySelector("[name=durTipo]:checked").value, parseInt(document.getElementById("durQtd").value, 10) || null);
+  };
+  form$.addEventListener("input", sync); form$.addEventListener("change", sync); sync();
+  // clique direto (não depende de envio de formulário, que alguns visualizadores bloqueiam)
+  document.getElementById("criar").addEventListener("click", () => criarTorneio(false));
+  const forcar = document.getElementById("forcar");
+  if (forcar) forcar.addEventListener("click", () => criarTorneio(true));
+  form$.addEventListener("submit", ev => ev.preventDefault());
+  form$.addEventListener("keydown", ev => { if (ev.key === "Enter" && ev.target.tagName === "INPUT") { ev.preventDefault(); criarTorneio(false); } });
+}
+function radio(name, value, title, sub, cur) {
+  return `<label><input type="radio" name="${name}" value="${value}" ${cur === value ? "checked" : ""}><span>${esc(title)}<small>${esc(sub)}</small></span></label>`;
+}
+function textoChave(n, R) {
+  if (n < 2) return "Vazio = o mínimo de rodadas para a quantidade de jogadores.";
+  const k0 = log2c(n), byes = 2 ** k0 - n;
+  const auto = b => (b ? ` ${b} vaga(s) sobram e viram vitória automática para os primeiros sorteados.` : "");
+  if (!R) return `Vazio = ${k0} rodada(s), chave de ${2 ** k0} vagas.${auto(byes)}`;
+  if (R > MAX_CHAVE) return `O máximo é ${MAX_CHAVE} rodadas.`;
+  if (R >= k0) return `Chave de ${2 ** R} vagas.${auto(2 ** R - n)}${R > k0 ? ` Com rodadas a mais, ninguém joga partidas extras: quem fica sem adversário avança direto.` : ""}`;
+  if (R === k0 - 1) return `Preliminar com ${n - 2 ** R} partida(s) entre os últimos sorteados; os vencedores e os outros ${2 ** k0 - n} entram direto na chave de ${2 ** R} vagas.`;
+  return `Com ${n} jogadores o mínimo é ${k0 - 1} rodada(s), mais uma preliminar.`;
+}
+function textoDuracao(modo, n, tipo, qtd) {
+  const completo = modo === "1x1" ? (n % 2 ? n : n - 1) : Math.ceil(Math.max(1, n - 1) / 3);
+  const folga = modo === "1x1" && n % 2 ? " Com número ímpar, um jogador folga por rodada (a folga vale vitória)." : "";
+  if (!qtd) {
+    if (n < 2) return modo === "1x1" ? "Vazio = todos se enfrentam uma vez." : "Vazio = rodadas suficientes para cada um cruzar com quase todos.";
+    return (modo === "1x1" ? `Vazio = todos se enfrentam uma vez (${completo} rodadas).` : `Vazio = ${completo} rodada(s), cada um cruza com quase todos.`) + folga;
+  }
+  if (n < 2) return "";
+  const R = rodadasTodos({ modo, jogadores: Array(n).fill(0), rodadas: tipo === "rodadas" ? qtd : null, jogos_por_pessoa: tipo === "jogos" ? qtd : null });
+  let txt = tipo === "jogos" ? `${qtd} jogo(s) por pessoa → ${R} rodada(s).` : `${R} rodada(s) → cerca de ${modo === "pod" || n % 2 === 0 ? R : Math.floor(R * (n - 1) / n)} jogo(s) por pessoa.`;
+  if (modo === "1x1" && R > completo) txt += " Passa de uma volta completa, então haverá revanches (returno).";
+  if (modo === "1x1" && R < completo) txt += " Nem todos vão se enfrentar.";
+  if (modo === "1x1" && n % 2 && tipo === "jogos") txt += " Com número ímpar, alguns jogadores podem fazer 1 jogo a mais.";
+  return txt;
+}
+function lerJogadores(txt) { return txt.split(/[\n,;]+/).map(x => x.trim().replace(/\s+/g, " ")).filter(Boolean); }
+
+function criarTorneio(forcar) {
+  const q = id => document.getElementById(id);
+  const form = {
+    nome: q("nome").value.trim() || "Torneio de Magic",
+    modo: document.querySelector("[name=modo]:checked").value,
+    formato: document.querySelector("[name=formato]:checked").value,
+    jogadores: q("jog").value, seed: q("seed").value, pv: q("pv").value, pe: q("pe").value,
+    durTipo: document.querySelector("[name=durTipo]:checked").value, durQtd: q("durQtd").value,
+  };
+  form.chaveQtd = q("chaveQtd").value;
+  const qtd = form.durQtd !== "" ? Math.max(1, Math.min(60, parseInt(form.durQtd, 10) || 1)) : null;
+  const rChave = form.modo === "1x1" && form.formato !== "todos" && form.chaveQtd !== "" ? parseInt(form.chaveQtd, 10) || null : null;
+  const config = {
+    id: edicao || Date.now().toString(36) + Math.random().toString(36).slice(2, 6),
+    nome: form.nome, modo: form.modo, formato: form.formato, jogadores: lerJogadores(form.jogadores),
+    seed: form.seed !== "" ? parseInt(form.seed, 10) : 1 + Math.floor(Math.random() * 999999),
+    rodadas: form.formato === "todos" && form.durTipo === "rodadas" ? qtd : null,
+    jogos_por_pessoa: form.formato === "todos" && form.durTipo === "jogos" ? qtd : null,
+    rodadas_chave: rChave,
+    pontos_vitoria: form.pv !== "" ? parseInt(form.pv, 10) : 3, pontos_empate: form.pe !== "" ? parseInt(form.pe, 10) : 1,
+  };
+  if (form.seed === "") form.seed = config.seed; // mantém o sorteio se precisar reabrir o formulário
+  try { criar(config); } catch (e) { if (e instanceof ErroChave) return telaInicial(e.message, form, edicao); throw e; }
+  let resultados = [];
+  if (edicao && db.torneios[edicao]) {
+    const antigos = db.torneios[edicao].resultados;
+    resultados = reconstruir(config, antigos).validos;
+    const perdas = antigos.length - resultados.length;
+    if (perdas > 0 && !forcar) return telaInicial(null, form, edicao, perdas);
+  }
+  const eraEdicao = !!edicao;
+  db.torneios[config.id] = { config, resultados, atualizado: Date.now() };
+  salvarDB();
+  edicao = null;
+  abrir(config.id);
+  if (eraEdicao) toast(resultados.length ? `Opções salvas · ${resultados.length} resultado(s) mantido(s)` : "Opções salvas");
+}
+
+// ---------- Tela do torneio ----------
+function abrir(id) {
+  const s = db.torneios[id];
+  if (!s) return telaInicial();
+  const { t, validos } = reconstruir(s.config, s.resultados);
+  atual = { id, config: s.config, resultados: validos, t };
+  db.atual = id; salvarDB();
+  render();
+}
+function persistir() {
+  db.torneios[atual.id] = { config: atual.config, resultados: atual.resultados, atualizado: Date.now() };
+  db.atual = atual.id; salvarDB();
+  setHash("d=" + enc({ c: atual.config, r: atual.resultados }));
+}
+function mudarResultados(novos, msgConfirm) {
+  const { t, validos } = reconstruir(atual.config, novos);
+  const perdidos = novos.length - validos.length;
+  if (perdidos > 0 && !confirm(`${msgConfirm}\n\nIsso vai apagar ${perdidos} resultado(s) seguinte(s) que dependiam dele. Continuar?`)) return;
+  atual.resultados = validos; atual.t = t;
+  persistir(); render();
+}
+function definir(pid, venc) {
+  const p = atual.t.partidas[pid];
+  const novos = atual.resultados.map(r => r.slice());
+  const i = novos.findIndex(r => r[0] === pid);
+  if (p.vencedor === venc) { // clicar no vencedor de novo limpa o resultado
+    if (i >= 0) { novos.splice(i, 1); mudarResultados(novos, `Remover o resultado de ${pid}?`); }
+    return;
+  }
+  if (i >= 0) novos[i] = [pid, venc]; else novos.push([pid, venc]);
+  mudarResultados(novos, `Mudar o resultado de ${pid}?`);
+  if (campeao(atual.t) && atual.t.partidas[pid].vencedor === venc) toast(`🏆 ${campeao(atual.t)} é o campeão!`);
+}
+
+function nomeColuna(t, fase, rodada, pids) {
+  if (fase === "final") {
+    if (pids.includes("GF-2")) return "Reset da final";
+    if (pids.includes("GF-1")) return "Grande final";
+    return "Mesa final";
+  }
+  if (t.modo === "1x1" && (fase === "unica" || fase === "upper")) {
+    if (t.preliminar && rodada === 1) return "Preliminar";
+    const falta = t.k - rodada;
+    const nomes = fase === "unica" ? ["Final", "Semifinal", "Quartas de final", "Oitavas de final"] : ["Final da superior", "Semifinal"];
+    if (falta < nomes.length) return nomes[falta];
+    if (t.preliminar) return `Rodada ${rodada - 1}`;
+  }
+  if (t.modo === "1x1" && fase === "lower") {
+    const maxL = Math.max(...t.ordem.filter(x => t.partidas[x].fase === "lower").map(x => t.partidas[x].rodada));
+    if (rodada === maxL) return "Final da inferior";
+  }
+  return `Rodada ${rodada}`;
+}
+
+function render() {
+  const t = atual.t, c = atual.config;
+  const camp = campeao(t);
+  const prontas = t.ordem.filter(pid => pronta(t, t.partidas[pid]));
+  // agrupa por fase → rodada
+  const ordemFases = [], porFase = {}, autos = {};
+  for (const pid of t.ordem) {
+    const p = t.partidas[pid];
+    if (!porFase[p.fase]) { porFase[p.fase] = {}; ordemFases.push(p.fase); }
+    // vitórias automáticas (contra BYE) não viram card: vão para a lista "Avançaram sem jogar"
+    const ps = participantes(t, p);
+    if (t.formato !== "todos" && ps.includes(BYE) && (p.auto || ps.every(x => x === BYE))) {
+      if (p.vencedor && p.vencedor !== BYE) autos[p.vencedor] = (autos[p.vencedor] || 0) + 1;
+      continue;
+    }
+    (porFase[p.fase][p.rodada] = porFase[p.fase][p.rodada] || []).push(pid);
+  }
+  const tituloFase = { upper: "Chave superior", lower: "Chave inferior", final: "Final", rr: "", unica: "" };
+  const mostrarTitulos = ordemFases.length > 1;
+
+  const card = pid => {
+    const p = t.partidas[pid];
+    if (p.nao_necessaria) return `<div class="card skip" id="m-${esc(pid)}"><div class="id"><span>${esc(pid)}</span><span class="st">não precisou</span></div><div class="j tbd">Campeão da superior venceu a GF-1</div></div>`;
+    const parts = participantes(t, p);
+    const definidos = parts.every(x => x != null);
+    const clicavel = definidos && !p.auto && !camp || (definidos && !p.auto && p.vencedor != null);
+    const linhas = nomesPartida(t, p).map((n, i) => {
+      const real = parts[i];
+      const cls = ["j", p.vencedor === real && real != null ? "win" : "", n === BYE ? "bye" : "", real == null ? "tbd" : ""].join(" ");
+      if (clicavel && real != null && real !== BYE) return `<button class="${cls}" data-act="venc" data-pid="${esc(pid)}" data-nome="${esc(real)}" title="Marcar ${esc(real)} como vencedor">${esc(n)}</button>`;
+      return `<div class="${cls}">${esc(n)}</div>`;
+    }).join("");
+    let st = "";
+    if (p.vencedor === "empate") st = "empate";
+    else if (p.auto) st = "automática";
+    else if (p.vencedor != null) st = "jogada";
+    else if (definidos) st = "pronta";
+    else st = "aguardando";
+    const foot = t.formato === "todos" && definidos && !p.auto ? `<div class="foot"><button class="link" data-act="venc" data-pid="${esc(pid)}" data-nome="empate">${p.vencedor === "empate" ? "desfazer empate" : "empate"}</button></div>` : "";
+    return `<div class="card ${pronta(t, p) ? "ready" : ""}" id="m-${esc(pid)}"><div class="id"><span>${esc(pid)}</span><span class="st">${st}</span></div>${linhas}${foot}</div>`;
+  };
+
+  const secoes = ordemFases.map(fase => {
+    const rods = Object.keys(porFase[fase]).map(Number).sort((a, b) => a - b);
+    if (!rods.length) return "";
+    const cols = rods.map(r => `<div class="col"><h4>${esc(nomeColuna(t, fase, r, porFase[fase][r]))}</h4><div class="cards">${porFase[fase][r].map(card).join("")}</div></div>`).join("");
+    return `<section class="fase">${mostrarTitulos && tituloFase[fase] ? `<h3>${tituloFase[fase]}</h3>` : ""}<div class="board">${cols}</div></section>`;
+  }).join("");
+
+  let tabela = "", aviso = "";
+  if (t.formato === "todos") {
+    const cl = classificacao(t);
+    tabela = `<h2 style="margin-top:8px">Classificação</h2><div class="tblwrap"><table class="cls"><tr><th>#</th><th>Jogador</th><th>Pts</th><th>V-E-D</th><th>Jogos</th><th title="Soma dos pontos dos oponentes">Força oponentes</th></tr>
+      ${cl.map((l, i) => `<tr><td>${i + 1}</td><td>${esc(l.nome)}</td><td>${l.pts}</td><td>${l.v}-${l.e}-${l.d}</td><td>${l.jogos}</td><td>${l.forca}</td></tr>`).join("")}</table></div>
+      <p class="help">Desempate: pontos → força dos oponentes → vitórias → nome.</p>`;
+    if (camp && cl.length > 1 && cl[0].pts === cl[1].pts && cl[0].forca === cl[1].forca && cl[0].v === cl[1].v)
+      aviso = `<div class="note">Empate no topo entre ${esc(cl[0].nome)} e ${esc(cl[1].nome)} em todos os critérios. Vale um confronto direto ou uma mesa extra.</div>`;
+  }
+  let aguardando = "";
+  if (t.modo === "pod" && t.formato !== "todos" && !t.final_id) {
+    const u = t.pools.upper, l = t.pools.lower;
+    if (u.length || l.length) aguardando = `<div class="note">Aguardando a próxima rodada: ${[u.length ? `superior — ${u.map(esc).join(", ")}` : "", l.length ? `inferior — ${l.map(esc).join(", ")}` : ""].filter(Boolean).join(" · ")}</div>`;
+  }
+
+  app.innerHTML = `
+    <h1>${esc(c.nome)}</h1>
+    <div class="muted">${esc(MODOS[c.modo])} · ${esc(FORMATOS[c.formato])} · ${c.jogadores.length} jogadores${t.rodadas_total ? ` · ${t.rodadas_total} rodada(s)${c.jogos_por_pessoa ? ` (${c.jogos_por_pessoa} jogo(s) por pessoa)` : ""}` : ""}${t.k ? ` · chave de ${2 ** (t.preliminar ? t.k - 1 : t.k)} vagas${t.preliminar ? " + preliminar" : ""}` : ""} · sorteio nº ${esc(c.seed)}</div>
+    <div class="toolbar">
+      <button class="btn" data-act="desfazer" ${atual.resultados.length ? "" : "disabled"}>↶ Desfazer último</button>
+      <button class="btn" data-act="link">Copiar link</button>
+      <button class="btn" data-act="imprimir">Imprimir</button>
+      <button class="btn" data-act="editar">Editar opções</button>
+      <button class="btn" data-act="home">Novo torneio</button>
+    </div>
+    ${camp ? `<div class="champ">🏆 Campeão: ${esc(camp)}</div>` : ""}
+    ${aviso}${aguardando}
+    ${Object.keys(autos).length && t.formato !== "todos" ? `<div class="note">Avançaram sem jogar (vitória automática): ${Object.entries(autos).map(([n, q]) => esc(n) + (q > 1 ? ` (${q}×)` : "")).join(", ")}</div>` : ""}
+    ${!camp && prontas.length ? `<div class="muted" style="font-size:13px;margin-bottom:6px">Prontas para jogar — toque no nome de quem venceu:</div>
+      <div class="prontas">${prontas.map(pid => `<button class="chip" data-act="ir" data-pid="${esc(pid)}"><b>${esc(pid)}</b>${participantes(t, t.partidas[pid]).map(esc).join(" vs ")}</button>`).join("")}</div>` : ""}
+    ${secoes}
+    ${tabela}
+    <details class="sorteio"><summary>Ordem do sorteio</summary><p>${t.sorteio.map((n, i) => `${i + 1}. ${esc(n)}`).join(" · ")}</p></details>`;
+}
+
+// ---------- eventos ----------
+document.addEventListener("click", ev => {
+  const b = ev.target.closest("[data-act]");
+  if (!b) return;
+  const act = b.dataset.act;
+  if (act === "home") return telaInicial();
+  if (act === "cancelarEdicao") { const id = edicao; edicao = null; return abrir(id); }
+  if (act === "abrir") return abrir(b.dataset.id);
+  if (act === "excluir") {
+    const s = db.torneios[b.dataset.id];
+    if (s && confirm(`Excluir “${s.config.nome}” deste navegador?`)) { delete db.torneios[b.dataset.id]; salvarDB(); telaInicial(); }
+    return;
+  }
+  if (!atual) return;
+  if (act === "editar") return editarTorneio();
+  if (act === "venc") return definir(b.dataset.pid, b.dataset.nome);
+  if (act === "desfazer") { atual.resultados.pop(); const r = reconstruir(atual.config, atual.resultados); atual.t = r.t; atual.resultados = r.validos; persistir(); render(); return toast("Último resultado desfeito"); }
+  if (act === "imprimir") return window.print();
+  if (act === "link") {
+    persistir();
+    const url = location.href;
+    (navigator.clipboard ? navigator.clipboard.writeText(url) : Promise.reject()).then(() => toast("Link copiado — quem abrir vê a chave atual")).catch(() => prompt("Copie o link:", url));
+    return;
+  }
+  if (act === "ir") {
+    const el = document.getElementById("m-" + b.dataset.pid);
+    if (el) { el.scrollIntoView({ behavior: "smooth", block: "center", inline: "center" }); el.classList.add("flash"); setTimeout(() => el.classList.remove("flash"), 1400); }
+  }
+});
+
+// ---------- início ----------
+(function iniciar() {
+  const m = location.hash.match(/^#d=(.+)$/);
+  if (m) {
+    try {
+      const o = dec(m[1]);
+      if (o && o.c && Array.isArray(o.c.jogadores) && Array.isArray(o.r)) {
+        criar(o.c); // valida
+        const local = db.torneios[o.c.id];
+        const igual = local && JSON.stringify(local.resultados) === JSON.stringify(o.r);
+        if (!local || igual || confirm("Este link tem uma versão diferente de um torneio que você já salvou aqui. Substituir pela versão do link?"))
+          db.torneios[o.c.id] = { config: o.c, resultados: o.r, atualizado: Date.now() };
+        salvarDB();
+        return abrir(o.c.id);
+      }
+    } catch (e) { /* link inválido: segue para a tela inicial */ }
+  }
+  if (db.atual && db.torneios[db.atual]) return abrir(db.atual);
+  telaInicial();
+})();
+</script>
+</body>
+</html>

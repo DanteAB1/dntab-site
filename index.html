@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>DNT · Em breve</title>
+<meta name="description" content="Em breve novidades no site do DNT.">
+<style>
+  :root {
+    --fundo: #0e0c12; --texto: #ece6d8; --suave: #9d95a8; --destaque: #c9a24a;
+    color-scheme: dark;
+  }
+  @media (prefers-color-scheme: light) {
+    :root { --fundo: #f4f0e8; --texto: #1e1a24; --suave: #6c6476; --destaque: #8b6a1e; color-scheme: light; }
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; height: 100%; }
+  body {
+    background: radial-gradient(900px 500px at 50% 0%, color-mix(in srgb, var(--destaque) 18%, transparent), transparent 70%), var(--fundo);
+    color: var(--texto);
+    font: 16px/1.5 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    display: grid; place-items: center; text-align: center; padding: 24px 16px;
+  }
+  .ornamento { color: var(--destaque); letter-spacing: .6em; font-size: .8rem; margin-bottom: 20px; }
+  h1 {
+    font-family: Georgia, "Times New Roman", serif; font-weight: normal;
+    font-size: clamp(2.4rem, 10vw, 4.5rem); line-height: 1.05; margin: 0;
+  }
+  h1 b { color: var(--destaque); font-weight: normal; }
+  p { color: var(--suave); font-size: clamp(1rem, 3.5vw, 1.2rem); margin: 16px 0 0; }
+  footer { position: fixed; bottom: 16px; left: 0; right: 0; color: var(--suave); font-size: .8rem; }
+</style>
+</head>
+<body>
+  <main>
+    <div class="ornamento">✦ ✦ ✦</div>
+    <h1>Em <b>breve</b></h1>
+    <p>Novidades no site do DNT.</p>
+  </main>
+  <footer>dntab.com.br</footer>
+</body>
+</html>

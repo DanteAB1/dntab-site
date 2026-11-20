@@ -3,128 +3,40 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="robots" content="noindex">
-<title>Bem-vindo · dntab</title>
-<script>
-  (function () {
-    var t = null;
-    try { t = localStorage.getItem('dntab-tema'); } catch (e) {}
-    if (!t) t = matchMedia('(prefers-color-scheme: light)').matches ? 'claro' : 'escuro';
-    document.documentElement.setAttribute('data-tema', t);
-  })();
-</script>
+<title>DNT · Em breve</title>
+<meta name="description" content="Em breve novidades no site do DNT.">
 <style>
-  :root { --fundo:#0e0c12; --superficie:#18151f; --borda:#2f2a3a; --texto:#ece6d8; --suave:#9d95a8; --destaque:#c9a24a; --destaque-texto:#1a1408; --perigo:#e07a6e;
-    --brilho: radial-gradient(1200px 600px at 50% -10%, rgba(201,162,74,.16), transparent 60%); color-scheme: dark; }
-  [data-tema="claro"] { --fundo:#f4f0e8; --superficie:#fff; --borda:#ddd5c6; --texto:#1e1a24; --suave:#6c6476; --destaque:#8b6a1e; --destaque-texto:#fff; --perigo:#b8463a;
-    --brilho: radial-gradient(1200px 600px at 50% -10%, rgba(139,106,30,.14), transparent 60%); color-scheme: light; }
+  :root {
+    --fundo: #0e0c12; --texto: #ece6d8; --suave: #9d95a8; --destaque: #c9a24a;
+    color-scheme: dark;
+  }
+  @media (prefers-color-scheme: light) {
+    :root { --fundo: #f4f0e8; --texto: #1e1a24; --suave: #6c6476; --destaque: #8b6a1e; color-scheme: light; }
+  }
   * { box-sizing: border-box; }
-  html, body { margin: 0; }
-  body { background: var(--brilho), var(--fundo); color: var(--texto); min-height: 100vh; display: grid; place-items: center; padding: 20px;
-    font: 15px/1.5 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; }
-  .caixa { width: 100%; max-width: 380px; text-align: center; }
-  .caixa[hidden] { display: none; }
-  .marca { font-family: Georgia, serif; letter-spacing: .08em; color: var(--suave); margin-bottom: 28px; }
-  .marca b { color: var(--destaque); font-weight: normal; }
-  h1 { font-family: Georgia, "Times New Roman", serif; font-weight: normal; font-size: clamp(2.6rem, 9vw, 4.2rem); line-height: 1.05; margin: 0 0 8px; }
-  h1 .ornamento { display: block; color: var(--destaque); font-size: .35em; letter-spacing: .5em; margin-bottom: 14px; }
-  .sub { color: var(--suave); margin: 0 0 24px; }
-  form { background: var(--superficie); border: 1px solid var(--borda); border-radius: 14px; padding: 22px; text-align: left; display: grid; gap: 14px;
-    box-shadow: 0 20px 50px rgba(0,0,0,.25); }
-  label { display: grid; gap: 5px; font-size: .88rem; color: var(--suave); }
-  input[type="password"] { width: 100%; font: inherit; color: var(--texto); background: var(--fundo); border: 1px solid var(--borda); border-radius: 8px; padding: 10px 12px; }
-  input:focus, button:focus-visible { outline: 2px solid var(--destaque); outline-offset: 1px; }
-  .lembrar { display: flex; align-items: center; gap: 6px; cursor: pointer; }
-  button { font: inherit; border: 0; background: var(--destaque); color: var(--destaque-texto); font-weight: 600; padding: 11px; border-radius: 8px; cursor: pointer; }
-  button:disabled { opacity: .6; cursor: wait; }
-  .msg { color: var(--perigo); font-size: .88rem; min-height: 1.3em; margin: 0; }
-  .rodape { margin-top: 18px; font-size: .85rem; }
-  .rodape a { color: var(--destaque); }
+  html, body { margin: 0; height: 100%; }
+  body {
+    background: radial-gradient(900px 500px at 50% 0%, color-mix(in srgb, var(--destaque) 18%, transparent), transparent 70%), var(--fundo);
+    color: var(--texto);
+    font: 16px/1.5 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    display: grid; place-items: center; text-align: center; padding: 24px 16px;
+  }
+  .ornamento { color: var(--destaque); letter-spacing: .6em; font-size: .8rem; margin-bottom: 20px; }
+  h1 {
+    font-family: Georgia, "Times New Roman", serif; font-weight: normal;
+    font-size: clamp(2.4rem, 10vw, 4.5rem); line-height: 1.05; margin: 0;
+  }
+  h1 b { color: var(--destaque); font-weight: normal; }
+  p { color: var(--suave); font-size: clamp(1rem, 3.5vw, 1.2rem); margin: 16px 0 0; }
+  footer { position: fixed; bottom: 16px; left: 0; right: 0; color: var(--suave); font-size: .8rem; }
 </style>
 </head>
 <body>
-<div class="caixa" id="abrindo"><p class="sub">Abrindo…</p></div>
-<div class="caixa" id="porta" hidden>
-  <div class="marca"><b>dn</b>tab</div>
-  <h1><span class="ornamento">✦ ✦ ✦</span>Bem-vindo</h1>
-  <p class="sub">Digite a senha para entrar.</p>
-  <form id="form" autocomplete="on">
-    <input type="text" name="username" value="dntab.com.br" autocomplete="username" hidden>
-    <label>Senha <input type="password" id="senha" autocomplete="current-password" required autofocus></label>
-    <label class="lembrar"><input type="checkbox" id="lembrar"> Lembrar neste aparelho</label>
-    <p class="msg" id="msg" role="alert"></p>
-    <button type="submit" id="botao">Entrar</button>
-  </form>
-  
-</div>
-<script>
-(function () {
-  'use strict';
-  var CHAVE = 'dntab-chave', ITER = 600000;
-  var SAL = '7Qm0r7v3H2kq1T9xWcZb4g==', IV = 'F6uysEcJJiPnxOcR', DADOS = '6caKxvv9+6ZosI2nDJgls8mBHAryd1xqUuaGCu6zPEy4PM5ZoDdWIiubAf1NGoJJ39lzMe+hzXg4rqHZ173jF61+OTKszhybDk8aIQo2xR2VG/QRSDFXOsGWn3bAYWPXi+cZdxylfQVkJIg72wWwkVOGom6aetFMErvH9eExYDjZFj6scTB773Bh9ck7bP9yfv3nnYeiG1XCoiLNdZkaqROwyCmxPOn4y+pdf4EXIKE7XEmNuo0mUVgFM2GzawUhOgr6P92flvtc0XfktBmUJMkOstODsrIxwP5dhs1Eg0hsfiSDgsw62IVGQTSd8912hqFJxFcvSs4jPgz09A9xG99Ruz3JM0sc1uSe88MttR7JaOtClQGDwaAvByu4eILiKRzkO72FqhJwvfmV30uDbag3AcCgkmLJDaHcD+Y49zQrva8982cJ59eANT1MEqoj3K/uIS0HkiYjnT7HgarGp4xM+JcOQ1qrw3HDH8AIvJl3Bjh/+yzDyq4iIRE4M8tccxWNDZS0yL63HoOudONCOhMSrxbCeHwZreh/VmDe+29OaAVmIrbx7U6UK+Pd0AZLWU72cyrUMhC3365w0X7zFKCTnCvqprWgEsIpCppk3u3ZyMDhnBuIKx6J+KcI7ph+9iMQv6sbGO1sJlmtmF1v/HybojLpMA4edPYevu5rWLPKfLkN8qiqubX3YLssu5c98fntmy3a4EwTOMn85/YV4oHhjOLQ71cXCxUSb2OkDN+HElddlopqsD3eup5Sf2dp8s/5u03BZgS1zrfjE6FrTj1PvJTfT8sdpby4mvr1lELpId539Yeg9Jn06OM4YzLpMtxnFW9MFqe1G94M/ecxeAJkRCnskxtOj8o6J4Ymi4EJBJ7SCCiG1IlmR0zWzIpaM7ceI2+NUKf9xrfpON2sXw7iJGBGbKaBXutHKJW1fBxTGutO2pyMJTOAW+UD8ROgtEUx0P3Wz6j/8PiBLdOQOdfyl8dMORBjv2oX32wb3YvstNYYHUdo+/iuRXYom0e6hgHAWjYtNsNRZOc2f9Bc8KOzfIRtP/AXvQauwRV5n/ec2HSX0FgKhWNfrtGzxfsR0RLFAyR98+nHfodxfGs3qLkp6jrEp993J8x1/7TsWeCD20MvW4sdziAQaF5D5gHTYo19RhW3lT2hWmi7loULhq7tMG1cf0vfAFJvmnaxNOMn/iV9wnEaf82m58rVWNd9omHzVrxCna5UVP1Npvc3SWdd4RrXNgUr40qgSgx8A9E9h7hugV4/xeU+q3Mvsts3aKAVkk/d9uJ3oiAC36BCL6exIN5SpvUK+duCb1zJHCKwVZ30p9OYvIRMCYqUT8N4pCNMcEibivV3/lthzBufoFWbH7figvICbUGVoU2LZace74vSXri/1qEwkgwolEpivvSYhkyPLRkhLjlpZewgreA5Thh7xSUPky9aP9cIAwWVHPNi+nQFuvmDHJMzeEuBJI4C/BaLgolKLHn4clqofpcPE2t1N1j/FcoquxnVSLFOPK7ig3MfwHvO8isfGWzJ0KmjGvUaKrTvGdzV/74hJRfpvaikCvCThM6u/z028fBcSdiVe9EIKBj0mgi9AG8RVCZwb/3RcLNA0peWgBv/LxR7/Vqj3CTtvqfiF6DtAn6EXVAAU/0hdHtic2+i6Tp0MHxIUwnbxtZFGAdhfu01IZdZBlBnAevK8YsiH1JURnggXf9NHJxHYaPwtgk760AyXHbuTS+fMwdK4VJfhj2ZPKTm1uXUJtABpY6MKoGUoILfNbsHMBGxfPaAPNGKV5hEtmB5BM4npBMFX4d9k8cVTqUecNCchVgFpG1DZApOB1oaUtGwnIbJ15N4y9szVRIo+WeD2Cp4CAMCZ9911BBXBJPZ81k6oTNvtZhbHZLkEb8+ba/PobTgD/Nl4pkE6qB2MWuNhpnfTmX7I0l0wvOqMv+VCKDEsacAhAdsWYiOr/iuR3baCHpdyDF8s1LeBDXGRBP9Kx55vkpHZatl8DWE0l9IHrSjrZ+aZwbySU9Q5JSaOsq+vzpICJSg1EprOl4RuDjlObl9dUqozKZs/S46uwVQrJdgDwA578dqp075brG62nOpt6oAyQRFLR9WoaJLbGU57IiaFrK+1u/7DZ8XFNZBv6MCdf1c5ei2fhG8h/4aU+2noTs8oOY+EA2nuhmERH+qkkmFTfPU5hQWBHwUSkOUsqnwWetatAdpemunBZ0uo7XFy1oaGvdajRNpGxQp+uMgIbItKGxXNQO71EHOp5xpxAiwEhM/U3hC48UW5xdjq+z13pthXAyPkO1VVLCMfmR7sSefztUUfRdjPI2L1FXkFOZ6797s+zFw3B2pNtEHfO8vj+HaINZuNapCLASYrDik9WyjRfjY/Xszvlvd41RH2IYsPvbMXv9TUAT6sBHrxTWaweQFY1bPM9zScz/Qg2lbfni+drIYSC8M+axD1P3gwpPEgxa5KhVbeErYusj9H4ZIskf5gAyJtYO6uFaFc+I5t0LTHTt00voso60TunhA0dFPPG/u1mt8IAhjnuuTqILWcJMsaWSI7Md+ljlIxjkoNRytN41DZQBMsxrvRFFEIcYfUnj3DK8FuQLawtdgYQZnKujDWsSrQ7QHA6mTd6vHQ26kYOQ6g9dmPoxGIfE5jbvq4x9b1PtUAxWh9ia5C8LYbRlbJj1zvLUSOWQZqKZFZX9J1irrU6y9tuB4kA5uwNxiDbK/yFYFxkM1nRaM5bNKbaLczn8S4qEumEEKDFt7l/wHgFyssHcBsG9mQScVhZsls8iwn+mEDss2ri/cJJrOoWgMizPitAJh+CHln79XQudai9kOm2aCwOGFp+4ccAQIA8BYuEQgmzi9veT6D5puvUCGs+sYYnwXkdTsY+MsN/O01UPpPDhSC36MJom95CPOZ3cjjcnO40VY82eTpyAJguJs1+If/4QEDwWs4Q3nY0h8w0IK3tIKz1GXrgN0bv8OIjTYIzdxranQwj/kcoUZi+gIYC2R7OavXNU9dVNvzxjX4m6b6QLYsuCSHReNG/UWt1IwBpk2squFPgBXmAid5H1asUAolnAI6DEbVbaKcUNiwooccbePqA0vgh5Whuy6keqWJ0Cyrt9/aIxWiwtaodJ1rFFVEIzb0LYfijpMtQIEr1ip7+Whq2pafUqAtN/6lcueW/FSZ0iGampLMZRR4j3LAoVxAny2x0eWG0YHz2yFfU4RQqqA+b09x83AeFNnirL/TJfCbpNOlN3FT+/Bjh1DNMAEoJNY+VcYaRJN3jpM0altvlDxZ6QBQOXBXZSY5qNU8z8ok2ecMcGRMDOXGu+6FQKvXfYaakJEKNkSTlTwYZxLcOzTDjep1OahEIPfJWWKXCLBFEVxdzL1yHJwO4uCFqX3LW4CRIuIHVLaSmlmEpHopYnPSE3BhwrHSWGlj4E9H1qwH/mNM1y6KcoBwV+exUcVBec84mANMr/NbbRSjt665Mexk/W1jzdrs5aytD2pmGmL6WLHfmHSa6/hC/r8YdccyXfogsl+IPLgClh2vHLdTf/cF/8sCU3UItklq8uQc8n9nt0Euz7IbLoHSrQq5UT3+jv1JD/ecnQsT0Jyo3d80hF/K4xxdh4t8dd41ov6w53/BQvCKiPzK40cCKivrCoJXb82hS7z//1p9ZFGkD8bX3aOESqk42dlwwev+oJxFNMcBueq/KQd3FBsCUdUjTxYjj//0AEZNl+E8iwKQqCqi+V3kZ7mqcOEZh2PzV9GZv1fE45CFK+5ZvhMxhuw4XMveoQteaHTI/IjL25LCNdkeUEoAjmI9FyRBzshdiCBgiK7vUhbuo32B0YQ2VMLblifdLWduqy1WQuIYjwi7tUl3brcyvj09ZOEYWXrUjgOyfN3AS2n5JlPqRUDbqd9cggDaS4wwawjRmQ02iDkZXTs++B1kMTeziTVRcqE0RZnI6d2/SnyUwTSIYW/i6keAHsNh8NlCguAIUhoNAa839r7/kSPuShCShTgTSviUQtayMEzkTxNLXIJmUKHU1y5Ffctu6oum+CqK3jwUvXTLfPbwoV/5QzI/vTqdSaiq+xVV3yGEgi2QONrKG3UtD2OXJ+S0T1DyCYHca4fQhcIF18ECc8AMI4KoXEZoW2ZnsC10+wH6Jz35q3ESKmpIdC1HYJavxLNrXIRlabY7Eq1qMS3mIoQ2qahm+0O6ffoGyYJNgo95qud+VGI7kNvJjtU97I6GUvFoTqu5K8m7Lo8+xTKOTxlD8kei/T26zZHOui8N+53qNG7mxgg4y651AwjvGccLjL0xQtteYrT6cBlhL5DvWmIgHphW2h6KN5yiICVGYEIeEfNmY3qs1s8trUIIX+q7JoYNJWKWQNgzshMSFEmJv2CH0gEOkGFtR4HBvJn7cuYsFMt5bQG1gGiCpUxVx3XpEERDjgLH1gCVK7wQRSGMhsO5QS+6xCIJI0IWdL1WNprBhnTY3xVkC3vm7ggBDGyNsROvYmp0E7ck2n/u/NOl8Q3Vjn/xqDG2eJ4egXDLkAwVPtYIPVMoR5mPL8r0AwXaTnHfx4TqUpap2Bxpth3uOGX3vhf64D1RnrAULVyfjkIc3eNEICigaqLi/z/cOkquKukpLHR1aIb7EdnSjHpIsze5mEFPpLzKf0JXRXCV5cDd9NuW7yJgBszjgUUNtKBYRNG5HE2/DccbeTOdYs0lODC2HtKiVm4v9Hx0mUp9DJqNqW1/FQSWzGOLZsiBaPxylXoTMDydpsiUkIbs0XXx2JvLmAqrNonD4L6KZIUztRylTCsRsDYqTvKA1yN4gueTF0iRNzv1+ADVmknWVr8YW18sNaWHDdgXqj2OK+I/THlHFWqm9XDcpzZlmpoqIUvvT9sBO6fJVE/sCCGzpiK8e0SRKBIhb1Sup49mEfZdZl93DZk8Rl3oX0YkkZti/FelZRpm9ZWhkIUKAfuUKLtcbKTOV0ZjZZWpi2AtaBEfu/9KcKdemyNtkpEO2EnRIAv19SZh0YS7xzwc6TCoIZo06OCAxUMofEOYp4Un9uTeYsZJZyUDlOilkHpZON1Ds/nnmqDKm0brzCSR7AV1wGrLz+XKUkaUgO6bCdeeKT/YfcTlOPiFqAndl7vFp3kNW80GOxy5s8748Pd4TudwwBK6x+kdiQ5uouwaHOu7luKlNZ7RW3p+OYnj3SlBNaMzLQCRGIQcVQYODU9Ix2qveRnm1YdlHZhmgF+SCs8VHm4hP8VcRGoMjXZzWhvD5fRPpgy7hDIcG3pcCQ4jTEGDIPZq7+BxIcxpjXwWdbcPpnlyvE1JTRVjWOHmBkVnlMviYH33T5XPZQyZUrFA+XdzV0fcLXXzgPKTLHqQhXp6VF4004ahSkVDmIPn+fkQlFGum1+8jr82kqLLAiAvskOAT8IV/Xn1w6XtmyE44m4EBgd/S1AODCvY0bW6hu7bn/wtAF746ZYmQfNAYhWK2FfpbGnsD/UZUDa5U+dbo2rMoPLJU0/l6yVRiOOhE7iNk0RBnVc9jSMmzRgUQbg8G0KKYGKehFJHs9QJ09i3BjELo1bU8OPEMkqinzkPVA0okk3gPyg4yxxS+0H/cnh5fISlOT3QRWE5bva/O55RH55z0Pi/sY34xuX3nM9GEZ71Doss6Kk+YsumZGkMInf/eXNXZhzc41OCnkM2F6Ryg4xLfltmQ/FIjmucrXOAQtco1nkUc27zfNvrQVuOBV3oFKPJ4KDSiXwfjOLz1NoS57MtC3bvwE6KNSFe6RnSlh83qNWNSj+AX82AlqyFNyN2XEgaf2Iqt2DaCzxPA1nVjBMVIlzqkIUuNdTchEBRzAzL2E74E3Bk596YHwOtNMXRhIiqLkyTK80rnJT3YkmM4bV55LuU/1HR20LsxUljSDMFh2t5MCdm2ObdVYAMhdVp91ye0QpxPtb3Vsm0mcbrtpLcPo3S60RI2Hw4Mi7EvXD9SIH7fvzlA7C/TyERb36d4MPE4IAnmlz8e4Ny5uqNuWWkFT01bUh0axJYYR3BUyx/gUlKHvttoG/xk7t1T8bKCO4P+i4Rns75//4KUf2RQKe5EcMVSyWXwnqUoMqZ0haJQtbww7jAurlSkrqwchlrydfIjNqrOXBliWndzGQkltKxLdW6b+EtlpHarLOOl4NaN6CsKwa/CCmqO8kP7idWhCQMmXYSFpqZ+zKJZn0v5x5PFBUD/4y2q3Fo7G3/A84Eoortg4QoTJBwcQL3fx6xRKG9WozyCelyx/ifWHLKvD5PUw0rgpV1vSLpU8cMqn63Q7acdq8oC+WXVijk4W/GkGEiJRkTnskb3kQ0aSmzrrTDA==';
-  function bytes(b64) { var s = atob(b64), a = new Uint8Array(s.length); for (var i = 0; i < s.length; i++) a[i] = s.charCodeAt(i); return a; }
-  function b64(a) { var s = ''; for (var i = 0; i < a.length; i++) s += String.fromCharCode(a[i]); return btoa(s); }
-  function ler() { try { return sessionStorage.getItem(CHAVE) || localStorage.getItem(CHAVE); } catch (e) { return null; } }
-  function esquecer() { try { sessionStorage.removeItem(CHAVE); localStorage.removeItem(CHAVE); } catch (e) {} }
-  function guardar(v, lembrar) {
-    try { sessionStorage.setItem(CHAVE, v); if (lembrar) localStorage.setItem(CHAVE, v); } catch (e) {}
-  }
-  function mostrarPorta(msg) {
-    document.getElementById('abrindo').hidden = true;
-    document.getElementById('porta').hidden = false;
-    document.getElementById('msg').textContent = msg || '';
-    document.getElementById('senha').focus();
-  }
-  var sub = window.crypto && crypto.subtle;
-  function abrir(chaveB64) {
-    return sub.importKey('raw', bytes(chaveB64), 'AES-GCM', false, ['decrypt'])
-      .then(function (k) { return sub.decrypt({ name: 'AES-GCM', iv: bytes(IV) }, k, bytes(DADOS)); })
-      .then(function (claro) {
-        var pagina = new TextDecoder().decode(claro);
-        // Só troca o conteúdo depois que esta página terminou de carregar
-        return new Promise(function (ok) {
-          function trocar() { document.open(); document.write(pagina); document.close(); ok(); }
-          if (document.readyState === 'complete') setTimeout(trocar, 0);
-          else window.addEventListener('load', function () { setTimeout(trocar, 0); });
-        });
-      });
-  }
-  function derivar(senha) {
-    return sub.importKey('raw', new TextEncoder().encode(senha), 'PBKDF2', false, ['deriveBits'])
-      .then(function (base) { return sub.deriveBits({ name: 'PBKDF2', salt: bytes(SAL), iterations: ITER, hash: 'SHA-256' }, base, 256); })
-      .then(function (bits) { return b64(new Uint8Array(bits)); });
-  }
-
-  if (!sub) {
-    mostrarPorta('Este navegador não consegue abrir páginas protegidas. Use Chrome, Edge, Firefox ou Safari atualizados.');
-    document.getElementById('botao').disabled = true;
-    return;
-  }
-
-  var salva = ler();
-  if (salva) abrir(salva).catch(function () { esquecer(); mostrarPorta(); });
-  else mostrarPorta();
-
-  document.getElementById('form').addEventListener('submit', function (e) {
-    e.preventDefault();
-    var botao = document.getElementById('botao'), senha = document.getElementById('senha').value;
-    var lembrar = document.getElementById('lembrar').checked;
-    if (!senha) return;
-    botao.disabled = true; botao.textContent = 'Verificando…';
-    document.getElementById('msg').textContent = '';
-    var chaveOk = null;
-    derivar(senha).then(function (chave) {
-      chaveOk = chave;
-      return abrir(chave);
-    }).then(function () {
-      guardar(chaveOk, lembrar);
-    }, function () {
-      botao.disabled = false; botao.textContent = 'Entrar';
-      document.getElementById('msg').textContent = 'Senha incorreta.';
-      document.getElementById('senha').select();
-    });
-  });
-})();
-</script>
+  <main>
+    <div class="ornamento">✦ ✦ ✦</div>
+    <h1>Em <b>breve</b></h1>
+    <p>Novidades no site do DNT.</p>
+  </main>
+  <footer>dntab.com.br</footer>
 </body>
 </html>
